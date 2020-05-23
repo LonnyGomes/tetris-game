@@ -1,10 +1,19 @@
 const init = () => {
     let squares = Array.from(document.querySelectorAll('.grid div'));
-    const draw = () => {
+    const drawLogic = (isUndraw = false) => {
         current.forEach((index) => {
-            squares[currentPosition + index].classList.add('tetromino');
+            const curSquare = squares[currentPosition + index];
+
+            if (isUndraw) {
+                curSquare.classList.remove('tetromino');
+            } else {
+                curSquare.classList.add('tetromino');
+            }
         });
     };
+    const draw = () => drawLogic();
+    const undraw = () => drawLogic(true);
+
     const width = 10;
     const GRID_WIDTH = width;
 
@@ -53,7 +62,10 @@ const init = () => {
     ];
 
     let currentPosition = 4;
-    let current = theTetrominoes[0][0];
+    let currentRotation = 0;
+    const random = Math.floor(Math.random() * iTetromino.length);
+    console.log('random', random);
+    let current = theTetrominoes[random][currentRotation];
 
     draw();
 };
