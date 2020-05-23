@@ -36,6 +36,29 @@ const iTetromino = [
     [GRID_WIDTH, GRID_WIDTH + 1, GRID_WIDTH + 2, GRID_WIDTH + 3],
 ];
 
+const init = () => {
+    let squares = Array.from(document.querySelectorAll('.grid div'));
+    const drawLogic = (isUndraw = false) => {
+        current.forEach((index) => {
+            const curSquare = squares[currentPosition + index];
+
+            if (isUndraw) {
+                curSquare.classList.remove('tetromino');
+            } else {
+                curSquare.classList.add('tetromino');
+            }
+        });
+    };
+    const draw = () => drawLogic();
+    const undraw = () => drawLogic(true);
+    const moveDown = () => {
+        undraw();
+        currentPosition += GRID_WIDTH;
+        draw();
+    };
+
+    const timerId = setInterval(moveDown, 1000);
+
     const theTetrominoes = [
         lTetromino,
         zTetromino,
