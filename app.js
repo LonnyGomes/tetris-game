@@ -78,8 +78,9 @@ const init = () => {
             )
         ) {
             current.forEach((subIndex) =>
-                squares[currentPosition + index].classList.add('taken')
+                squares[currentPosition + subIndex].classList.add('taken')
             );
+            genRandShape(theTetrominoes, state);
         }
     };
     const updatePosition = (state, offset) => {
