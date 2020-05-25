@@ -39,10 +39,11 @@ const tetrominoState = {
     currentPosition: 4,
     currentRotation: 0,
     current: [],
+    squares: [],
 };
 
 const init = () => {
-    let squares = Array.from(document.querySelectorAll('.grid div'));
+    tetrominoState.squares = Array.from(document.querySelectorAll('.grid div'));
     const genRandShape = (tetrominoes, state) => {
         const { currentRotation } = state;
 
@@ -53,7 +54,7 @@ const init = () => {
         tetrominoState.current = tetrominoes[random][currentRotation];
     };
     const drawLogic = (state, isUndraw = false) => {
-        const { current, currentPosition } = state;
+        const { current, currentPosition, squares } = state;
 
         current.forEach((index) => {
             const curSquare = squares[currentPosition + index];
@@ -68,7 +69,7 @@ const init = () => {
     const draw = (state) => drawLogic(state);
     const undraw = (state) => drawLogic(state, true);
     const freeze = (state) => {
-        const { current, currentPosition } = state;
+        const { current, currentPosition, squares } = state;
         // if the text row has any taken elements freeze movement
         if (
             current.some((index) =>
