@@ -97,6 +97,15 @@ const init = () => {
             case 37:
                 moveLeft();
                 break;
+            case 38:
+                //rotate
+                break;
+            case 39:
+                moveRight();
+                break;
+            case 40:
+                moveDown();
+                break;
         }
     };
     const moveDown = () => {
@@ -120,6 +129,27 @@ const init = () => {
         if (isTaken(tetrominoState)) {
             // if so, undo our move
             updatePosition(tetrominoState, 1);
+        }
+
+        // re-drawn now that position has been computed
+        draw(tetrominoState);
+    };
+    const moveRight = () => {
+        undraw(tetrominoState);
+        const isAtRightEdge = tetrominoState.current.some(
+            (index) =>
+                (tetrominoState.currentPosition + index) % GRID_WIDTH ===
+                GRID_WIDTH - 1
+        );
+
+        if (!isAtRightEdge) {
+            updatePosition(tetrominoState, 1);
+        }
+
+        // check if there are any taken squares in the new location
+        if (isTaken(tetrominoState)) {
+            // if so, undo our move
+            updatePosition(tetrominoState, -1);
         }
 
         // re-drawn now that position has been computed
