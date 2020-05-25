@@ -82,13 +82,7 @@ const init = () => {
     const freeze = (state) => {
         const { current, currentPosition, squares } = state;
         // if the text row has any taken elements freeze movement
-        if (
-            current.some((index) =>
-                squares[
-                    currentPosition + index + GRID_WIDTH
-                ].classList.contains('taken')
-            )
-        ) {
+        if (isTaken(state, GRID_WIDTH)) {
             current.forEach((subIndex) =>
                 squares[currentPosition + subIndex].classList.add('taken')
             );
@@ -98,13 +92,44 @@ const init = () => {
     const updatePosition = (state, offset) => {
         state.currentPosition += offset;
     };
+    const keyUpHandler = (e) => {
+        switch (e.keyCode) {
+            case 37:
+                moveLeft();
+                break;
+        }
+    };
     const moveDown = () => {
         undraw(tetrominoState);
         updatePosition(tetrominoState, GRID_WIDTH);
         draw(tetrominoState);
         freeze(tetrominoState);
     };
+    const moveLeft = () => {
+        undraw(tetrominoState);
+        const isAtLeftEdge = tetrominoState.current.some(
+            (index) =>
+                (tetrominoState.currentPosition + index) % GRID_WIDTH === 0
+        );
 
+        if (!isAtLeftEdge) {
+            updatePosition(tetrominoState, -1);
+        }
+
+        // check if there are any taken squares in the new location
+        if (isTaken(tetrominoState)) {
+            // if so, undo our move
+            updatePosition(tetrominoState, 1);
+        }
+
+        // re-drawn now that position has been computed
+        draw(tetrominoState);
+    };
+
+    // listen for keyboard events
+    document.addEventListener('keyup', keyUpHandler);
+
+    // start interval that refreshes the screen
     const timerId = setInterval(moveDown, 1000);
 
     const theTetrominoes = [
