@@ -66,6 +66,17 @@ const init = () => {
             }
         });
     };
+    const isTaken = (state, offset = 0) => {
+        const { current, currentPosition, squares } = state;
+
+        return current.some((index) =>
+            squares[currentPosition + index + offset].classList.contains(
+                'taken'
+            )
+        )
+            ? true
+            : false;
+    };
     const draw = (state) => drawLogic(state);
     const undraw = (state) => drawLogic(state, true);
     const freeze = (state) => {
