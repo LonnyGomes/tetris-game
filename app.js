@@ -38,20 +38,25 @@ const iTetromino = [
 const tetrominoState = {
     currentPosition: 4,
     currentRotation: 0,
+    currentShapeIdx: 0,
+    tetrominoes: [],
     current: [],
     squares: [],
 };
 
 const init = () => {
-    tetrominoState.squares = Array.from(document.querySelectorAll('.grid div'));
-    const genRandShape = (tetrominoes, state) => {
-        const { currentRotation } = state;
+    const genRandShape = (state) => {
+        const { tetrominoes } = state;
 
-        const random = Math.floor(Math.random() * tetrominoes[0].length);
+        const randomShapeIdx = Math.floor(
+            Math.random() * tetrominoes[0].length
+        );
 
         // update state information
+        tetrominoState.currentShapeIdx = randomShapeIdx;
         tetrominoState.currentPosition = 4;
-        tetrominoState.current = tetrominoes[random][currentRotation];
+        tetrominoState.currentRotation = 0;
+        tetrominoState.current = tetrominoes[randomShapeIdx][0];
     };
     const drawLogic = (state, isUndraw = false) => {
         const { current, currentPosition, squares } = state;
@@ -86,11 +91,27 @@ const init = () => {
             current.forEach((subIndex) =>
                 squares[currentPosition + subIndex].classList.add('taken')
             );
-            genRandShape(theTetrominoes, state);
+            genRandShape(state);
         }
     };
     const updatePosition = (state, offset) => {
         state.currentPosition += offset;
+    };
+    const updateRotation = (state, isForward = true) => {
+        const { currentRotation, currentShapeIdx, tetrominoes } = state;
+        const curShape = tetrominoes[currentShapeIdx];
+        let newRotation = isForward ? currentRotation + 1 : currentRotation - 1;
+
+        // loop index if the rotation exceeds the bounds
+        if (newRotation < 0) {
+            newRotation = curShape.length;
+        } else if (newRotation >= curShape.length) {
+            newRotation = 0;
+        }
+
+        // update the state with the new rotations and shape
+        state.currentRotation = newRotation;
+        state.current = tetrominoes[currentShapeIdx][newRotation];
     };
     const keyUpHandler = (e) => {
         switch (e.keyCode) {
@@ -98,7 +119,7 @@ const init = () => {
                 moveLeft();
                 break;
             case 38:
-                //rotate
+                rotate();
                 break;
             case 39:
                 moveRight();
@@ -155,6 +176,17 @@ const init = () => {
         // re-drawn now that position has been computed
         draw(tetrominoState);
     };
+    const rotate = () => {
+        undraw(tetrominoState);
+
+        updateRotation(tetrominoState);
+
+        if (isTaken(tetrominoState)) {
+            updateRotation(tetrominoState, false);
+        }
+
+        draw(tetrominoState);
+    };
 
     // listen for keyboard events
     document.addEventListener('keyup', keyUpHandler);
@@ -170,7 +202,10 @@ const init = () => {
         iTetromino,
     ];
 
-    genRandShape(theTetrominoes, tetrominoState);
+    tetrominoState.squares = Array.from(document.querySelectorAll('.grid div'));
+    tetrominoState.tetrominoes = theTetrominoes;
+
+    genRandShape(tetrominoState);
     draw(tetrominoState);
 };
 
