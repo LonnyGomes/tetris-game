@@ -178,20 +178,20 @@ const rotate = (state) => {
     draw(state);
 };
 
-const init = () => {
+const init = (state) => {
     const keyUpHandler = (e) => {
         switch (e.keyCode) {
             case 37:
-                moveLeft(tetrominoState);
+                moveLeft(state);
                 break;
             case 38:
-                rotate(tetrominoState);
+                rotate(state);
                 break;
             case 39:
-                moveRight(tetrominoState);
+                moveRight(state);
                 break;
             case 40:
-                moveDown(tetrominoState);
+                moveDown(state);
                 break;
         }
     };
@@ -200,7 +200,7 @@ const init = () => {
     document.addEventListener('keyup', keyUpHandler);
 
     // start interval that refreshes the screen
-    const moveDownIntervalFunc = moveDown.bind(this, tetrominoState);
+    const moveDownIntervalFunc = moveDown.bind(this, state);
     const timerId = setInterval(moveDownIntervalFunc, 1000);
 
     const theTetrominoes = [
@@ -211,11 +211,11 @@ const init = () => {
         iTetromino,
     ];
 
-    tetrominoState.squares = Array.from(document.querySelectorAll('.grid div'));
-    tetrominoState.tetrominoes = theTetrominoes;
+    state.squares = Array.from(document.querySelectorAll('.grid div'));
+    state.tetrominoes = theTetrominoes;
 
-    genRandShape(tetrominoState);
-    draw(tetrominoState);
+    genRandShape(state);
+    draw(state);
 };
 
-init();
+init(tetrominoState);
