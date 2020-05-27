@@ -53,10 +53,10 @@ const init = () => {
         );
 
         // update state information
-        tetrominoState.currentShapeIdx = randomShapeIdx;
-        tetrominoState.currentPosition = 4;
-        tetrominoState.currentRotation = 0;
-        tetrominoState.current = tetrominoes[randomShapeIdx][0];
+        state.currentShapeIdx = randomShapeIdx;
+        state.currentPosition = 4;
+        state.currentRotation = 0;
+        state.current = tetrominoes[randomShapeIdx][0];
     };
     const drawLogic = (state, isUndraw = false) => {
         const { current, currentPosition, squares } = state;
@@ -116,83 +116,83 @@ const init = () => {
     const keyUpHandler = (e) => {
         switch (e.keyCode) {
             case 37:
-                moveLeft();
+                moveLeft(tetrominoState);
                 break;
             case 38:
-                rotate();
+                rotate(tetrominoState);
                 break;
             case 39:
-                moveRight();
+                moveRight(tetrominoState);
                 break;
             case 40:
-                moveDown();
+                moveDown(tetrominoState);
                 break;
         }
     };
-    const moveDown = () => {
-        undraw(tetrominoState);
-        updatePosition(tetrominoState, GRID_WIDTH);
-        draw(tetrominoState);
-        freeze(tetrominoState);
+    const moveDown = (state) => {
+        undraw(state);
+        updatePosition(state, GRID_WIDTH);
+        draw(state);
+        freeze(state);
     };
-    const moveLeft = () => {
-        undraw(tetrominoState);
-        const isAtLeftEdge = tetrominoState.current.some(
-            (index) =>
-                (tetrominoState.currentPosition + index) % GRID_WIDTH === 0
+    const moveLeft = (state) => {
+        const { current, currentPosition } = state;
+        undraw(state);
+        const isAtLeftEdge = current.some(
+            (index) => (currentPosition + index) % GRID_WIDTH === 0
         );
 
         if (!isAtLeftEdge) {
-            updatePosition(tetrominoState, -1);
+            updatePosition(state, -1);
         }
 
         // check if there are any taken squares in the new location
-        if (isTaken(tetrominoState)) {
+        if (isTaken(state)) {
             // if so, undo our move
-            updatePosition(tetrominoState, 1);
+            updatePosition(state, 1);
         }
 
         // re-drawn now that position has been computed
-        draw(tetrominoState);
+        draw(state);
     };
-    const moveRight = () => {
-        undraw(tetrominoState);
-        const isAtRightEdge = tetrominoState.current.some(
+    const moveRight = (state) => {
+        undraw(state);
+        const isAtRightEdge = state.current.some(
             (index) =>
-                (tetrominoState.currentPosition + index) % GRID_WIDTH ===
-                GRID_WIDTH - 1
+                (state.currentPosition + index) % GRID_WIDTH === GRID_WIDTH - 1
         );
 
         if (!isAtRightEdge) {
-            updatePosition(tetrominoState, 1);
+            updatePosition(state, 1);
         }
 
         // check if there are any taken squares in the new location
-        if (isTaken(tetrominoState)) {
+        if (isTaken(state)) {
             // if so, undo our move
-            updatePosition(tetrominoState, -1);
+            updatePosition(state, -1);
         }
 
         // re-drawn now that position has been computed
-        draw(tetrominoState);
+        draw(state);
     };
-    const rotate = () => {
-        undraw(tetrominoState);
+    const rotate = (state) => {
+        undraw(state);
 
-        updateRotation(tetrominoState);
+        updateRotation(state);
 
-        if (isTaken(tetrominoState)) {
-            updateRotation(tetrominoState, false);
+        if (isTaken(state)) {
+            updateRotation(state, false);
         }
 
-        draw(tetrominoState);
+        draw(state);
     };
 
     // listen for keyboard events
     document.addEventListener('keyup', keyUpHandler);
 
     // start interval that refreshes the screen
-    const timerId = setInterval(moveDown, 1000);
+    const moveDownIntervalFunc = moveDown.bind(this, tetrominoState);
+    const timerId = setInterval(moveDownIntervalFunc, 1000);
 
     const theTetrominoes = [
         lTetromino,
