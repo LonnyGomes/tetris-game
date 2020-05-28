@@ -37,6 +37,7 @@ const iTetromino = [
 ];
 
 const tetrominoState = {
+    timerId: -1,
     currentPosition: 4,
     currentRotation: 0,
     currentShapeIdx: 0,
@@ -201,7 +202,7 @@ const init = (state) => {
 
     // start interval that refreshes the screen
     const moveDownIntervalFunc = moveDown.bind(this, state);
-    const timerId = setInterval(moveDownIntervalFunc, 1000);
+    tetrominoState.timerId = setInterval(moveDownIntervalFunc, 1000);
 
     const theTetrominoes = [
         lTetromino,
